@@ -2,6 +2,25 @@
 
 Este repositório contém scripts SQL para um sistema de banco de dados PostgreSQL com schemas `accounts` e `catalogs`, incluindo extensões e sistema de auditoria completo.
 
+## 📚 **Documentação Completa**
+
+### **📖 Guias Detalhados por Schema**
+- **[📚 README_SCHEMAS.md](README_SCHEMAS.md)** - **Documentação completa** de todos os schemas, funções e exemplos de uso
+- **[🔧 README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
+- **[📊 README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
+
+### **🎯 O que você encontrará nos guias:**
+- ✅ **Exemplos práticos** de todas as funções
+- ✅ **Consultas SQL** com exemplos reais
+- ✅ **Guias de manutenção** e monitoramento
+- ✅ **Solução de problemas** comuns
+- ✅ **Boas práticas** e padrões recomendados
+
+### **🔗 Links Rápidos**
+- **[📋 Accounts](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-4936&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de autenticação
+- **[🛍️ Catalogs](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-5599&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de produtos
+- **[💰 Quotation](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=176-1201&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de cotações
+
 ## ⚠️ Pré-requisitos
 
 - **PostgreSQL 12 ou superior**
@@ -11,7 +30,7 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 
 ## 📁 Estrutura do Projeto
 
-### Schemas Principais
+### **🗄️ Schemas Principais**
 
 #### `accounts` - Autenticação e Autorização
 - **users** - Usuários do sistema
@@ -332,6 +351,8 @@ ORDER BY table_name;
 3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
+
+
 
 ## 📄 Licença
 
