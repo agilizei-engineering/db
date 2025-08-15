@@ -4,6 +4,22 @@
 -- Este script estende a entidade establishments com informações
 -- adicionais de cadastro empresarial e endereço
 
+-- =====================================================
+-- VERIFICAÇÃO DE EXTENSÕES (OPCIONAL)
+-- =====================================================
+
+-- Verifica se a extensão pg_trgm está disponível (comum no RDS)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm'
+    ) THEN
+        RAISE NOTICE '✅ Extensão pg_trgm disponível - usando índices trigram';
+    ELSE
+        RAISE NOTICE '⚠️  Extensão pg_trgm não disponível - usando índices padrão';
+    END IF;
+END $$;
+
 -- Tabela para dados empresariais (CNPJ, Razão Social, etc.)
 CREATE TABLE accounts.establishment_business_data (
     establishment_business_data_id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -99,9 +115,18 @@ CREATE INDEX idx_establishment_addresses_establishment_id ON accounts.establishm
 CREATE INDEX idx_establishment_business_data_trade_name_gin ON accounts.establishment_business_data USING gin(to_tsvector('portuguese', trade_name));
 CREATE INDEX idx_establishment_business_data_corporate_name_gin ON accounts.establishment_business_data USING gin(to_tsvector('portuguese', corporate_name));
 
--- Índices trigram para busca fuzzy (similaridade)
-CREATE INDEX idx_establishment_business_data_trade_name_trgm ON accounts.establishment_business_data USING gin(trade_name gin_trgm_ops);
-CREATE INDEX idx_establishment_business_data_corporate_name_trgm ON accounts.establishment_business_data USING gin(corporate_name gin_trgm_ops);
+-- Índices trigram para busca fuzzy (similaridade) - condicionais
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm') THEN
+        -- Criar índices trigram se a extensão estiver disponível
+        EXECUTE 'CREATE INDEX IF NOT EXISTS idx_establishment_business_data_trade_name_trgm ON accounts.establishment_business_data USING gin(trade_name gin_trgm_ops)';
+        EXECUTE 'CREATE INDEX IF NOT EXISTS idx_establishment_business_data_corporate_name_trgm ON accounts.establishment_business_data USING gin(corporate_name gin_trgm_ops)';
+        RAISE NOTICE '✅ Índices trigram criados com sucesso';
+    ELSE
+        RAISE NOTICE '⚠️  Índices trigram não criados - extensão pg_trgm não disponível';
+    END IF;
+END $$;
 
 -- Índices para endereços com busca de texto
 CREATE INDEX idx_establishment_addresses_street_gin ON accounts.establishment_addresses USING gin(to_tsvector('portuguese', street));
