@@ -100,6 +100,8 @@ O schema `accounts` é o coração do sistema de autenticação e autorização,
 
 ---
 
+
+
 ### **🔐 Autenticação OAuth e Integração**
 
 #### **`user_google_oauth`** - Dados do Google OAuth
@@ -382,7 +384,7 @@ ORDER BY table_name;
 2. **establishments** (estabelecimento)
 3. **employees** (vinculação usuário-estabelecimento)
 4. **Dados complementares** (pessoais, empresariais, endereços)
-5. **Integrações OAuth** (se necessário)
+5. **Integrações OAuth** (Google OAuth, se necessário)
 
 ### **Boas Práticas**
 - Sempre use as funções de validação do schema `aux`

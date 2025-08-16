@@ -45,11 +45,10 @@ O schema `catalogs` gerencia todo o catálogo de produtos do sistema, incluindo 
 - **Relacionamentos**: Foreign keys para categorias, subcategorias e marcas
 - **Auditoria**: Automática via schema `audit`
 
-#### **`variants`** - Variações de Produtos
-- **Descrição**: Variações específicas de um produto (cor, tamanho, etc.)
-- **Campos principais**: `variant_id`, `product_id`, `name`, `description`, `sku`, `is_active`
-- **Funcionalidades**: Controle de variações, SKU único
-- **Relacionamentos**: Foreign key para `products.product_id`
+#### **`variant_types`** - Tipos de Variações
+- **Descrição**: Tipo ou variação específica do item (ex: Espaguete nº 08)
+- **Campos principais**: `variant_type_id`, `name`, `description`, `created_at`, `updated_at`
+- **Funcionalidades**: Definição de tipos de variações, controle de categorias
 - **Auditoria**: Automática via schema `audit`
 
 ---
@@ -86,15 +85,27 @@ O schema `catalogs` gerencia todo o catálogo de produtos do sistema, incluindo 
 - **Funcionalidades**: Controle de embalagens, busca por tipo
 - **Auditoria**: Automática via schema `audit`
 
+#### **`items`** - Itens Genéricos
+- **Descrição**: Itens genéricos que representam o núcleo de um produto
+- **Campos principais**: `item_id`, `subcategory_id`, `name`, `description`, `created_at`, `updated_at`
+- **Funcionalidades**: Base para produtos específicos, busca genérica
+- **Relacionamentos**: Foreign key para `subcategories.subcategory_id`
+- **Auditoria**: Automática via schema `audit`
+
+#### **`nutritional_variants`** - Variantes Nutricionais
+- **Descrição**: Variações nutricionais (ex: Light, Zero, Sem Lactose)
+- **Campos principais**: `nutritional_variant_id`, `name`, `description`, `created_at`, `updated_at`
+- **Funcionalidades**: Controle de variantes nutricionais, busca por restrições
+- **Auditoria**: Automática via schema `audit`
+
 ---
 
 ### **📊 Controle de Estoque e Preços**
 
-#### **`quantities`** - Quantidades Disponíveis
-- **Descrição**: Controle de estoque por variação de produto
-- **Campos principais**: `quantity_id`, `variant_id`, `available_quantity`, `reserved_quantity`, `minimum_stock`, `is_active`
-- **Funcionalidades**: Controle de estoque, alertas de estoque baixo
-- **Relacionamentos**: Foreign key para `variants.variant_id`
+#### **`quantities`** - Quantidades e Medidas
+- **Descrição**: Tipos de quantidade e medida disponíveis para produtos
+- **Campos principais**: `quantity_id`, `name`, `description`, `unit`, `is_active`
+- **Funcionalidades**: Controle de unidades de medida, padronização de quantidades
 - **Auditoria**: Automática via schema `audit`
 
 #### **`offers`** - Ofertas e Promoções
@@ -109,25 +120,25 @@ O schema `catalogs` gerencia todo o catálogo de produtos do sistema, incluindo 
 ## 🔍 FUNCIONALIDADES PRINCIPAIS
 
 ### **Sistema Hierárquico**
-- **Categorias** → **Subcategorias** → **Produtos** → **Variações**
+- **Categorias** → **Subcategorias** → **Itens** → **Produtos**
 - Organização lógica e flexível
 - Suporte a múltiplos níveis de categorização
 
-### **Controle de Variações**
-- Um produto pode ter múltiplas variações
-- Cada variação tem SKU único
-- Controle independente de estoque por variação
+### **Controle de Características**
+- Produtos podem ter múltiplas características
+- Sistema flexível de composições, recheios, sabores, formatos
+- Variantes nutricionais para controle de restrições alimentares
 
 ### **Características Flexíveis**
 - Composições, recheios, sabores, formatos e embalagens
 - Aplicáveis a qualquer produto
 - Sistema de tags para busca avançada
 
-### **Gestão de Estoque**
-- Controle de quantidade disponível
-- Quantidade reservada
-- Alertas de estoque mínimo
-- Rastreamento de movimentações
+### **Gestão de Características**
+- Controle de composições e materiais
+- Tipos de recheios e sabores
+- Formatos e embalagens disponíveis
+- Variantes nutricionais e restrições
 
 ---
 
@@ -144,15 +155,15 @@ SELECT * FROM catalogs.v_products_complete;
 -- Ideal para listagens e catálogos
 ```
 
-### **`v_variants_with_stock`**
-Variações com informações de estoque.
+### **`v_items_with_characteristics`**
+Itens com todas as características aplicáveis.
 
 ```sql
--- Consultar variações com estoque
-SELECT * FROM catalogs.v_variants_with_stock;
+-- Consultar itens com características
+SELECT * FROM catalogs.v_items_with_characteristics;
 
--- Retorna variações com quantidade disponível e reservada
--- Útil para controle de estoque
+-- Retorna itens com composições, recheios, sabores e formatos
+-- Útil para busca avançada e filtros
 ```
 
 ### **`v_categories_hierarchy`**
@@ -184,23 +195,27 @@ VALUES ('uuid-da-categoria', 'Doces', 'Produtos doces e sobremesas')
 RETURNING subcategory_id;
 ```
 
-### **2. Criar Produto com Variações**
+### **2. Criar Item com Características**
 
 ```sql
--- 1. Criar produto base
+-- 1. Criar item genérico
+INSERT INTO catalogs.items (name, description, category_id) 
+VALUES ('Chocolate Premium', 'Chocolate artesanal de alta qualidade', 'uuid-categoria')
+RETURNING item_id;
+
+-- 2. Criar produto específico
 INSERT INTO catalogs.products (name, description, category_id, subcategory_id, brand_id) 
 VALUES ('Chocolate Premium', 'Chocolate artesanal de alta qualidade', 'uuid-categoria', 'uuid-subcategoria', 'uuid-marca')
 RETURNING product_id;
 
--- 2. Criar variações
-INSERT INTO catalogs.variants (product_id, name, description, sku) VALUES 
-('uuid-produto', 'Chocolate 70%', 'Chocolate amargo 70% cacau', 'CHOC-70-001'),
-('uuid-produto', 'Chocolate 85%', 'Chocolate extra amargo 85% cacau', 'CHOC-85-001');
+-- 3. Adicionar características
+INSERT INTO catalogs.product_compositions (product_id, composition_id) VALUES 
+('uuid-produto', 'uuid-chocolate-70'),
+('uuid-produto', 'uuid-chocolate-85');
 
--- 3. Adicionar estoque para cada variação
-INSERT INTO catalogs.quantities (variant_id, available_quantity, minimum_stock) VALUES 
-('uuid-variacao-70', 100, 20),
-('uuid-variacao-85', 50, 10);
+INSERT INTO catalogs.product_flavors (product_id, flavor_id) VALUES 
+('uuid-produto', 'uuid-amargo'),
+('uuid-produto', 'uuid-doce');
 ```
 
 ### **3. Criar Marca com Logo**
@@ -259,20 +274,19 @@ JOIN catalogs.flavors fl ON pfl.flavor_id = fl.flavor_id
 WHERE c.name = 'Chocolate' AND f.name = 'Caramelo';
 ```
 
-### **Busca por Estoque**
+### **Busca por Características Nutricionais**
 
 ```sql
--- Produtos com estoque baixo
+-- Produtos com variantes nutricionais específicas
 SELECT 
     p.name as produto,
-    v.name as variacao,
-    q.available_quantity as estoque_atual,
-    q.minimum_stock as estoque_minimo
+    nv.name as variante_nutricional,
+    nv.description as descricao
 FROM catalogs.products p
-JOIN catalogs.variants v ON p.product_id = v.product_id
-JOIN catalogs.quantities q ON v.variant_id = q.variant_id
-WHERE q.available_quantity <= q.minimum_stock
-ORDER BY q.available_quantity;
+JOIN catalogs.product_nutritional_variants pnv ON p.product_id = pnv.product_id
+JOIN catalogs.nutritional_variants nv ON pnv.nutritional_variant_id = nv.nutritional_variant_id
+WHERE nv.name IN ('Sem Glúten', 'Sem Lactose', 'Vegano')
+ORDER BY p.name, nv.name;
 ```
 
 ---
@@ -303,21 +317,28 @@ GROUP BY b.brand_id
 ORDER BY total_produtos DESC;
 ```
 
-### **Verificar Estoque**
+### **Verificar Características dos Produtos**
 
 ```sql
--- Resumo de estoque
+-- Resumo de características por produto
 SELECT 
     p.name as produto,
-    v.name as variacao,
-    q.available_quantity as disponivel,
-    q.reserved_quantity as reservado,
-    (q.available_quantity - q.reserved_quantity) as estoque_livre
+    STRING_AGG(DISTINCT c.name, ', ') as composicoes,
+    STRING_AGG(DISTINCT f.name, ', ') as recheios,
+    STRING_AGG(DISTINCT fl.name, ', ') as sabores,
+    STRING_AGG(DISTINCT nv.name, ', ') as variantes_nutricionais
 FROM catalogs.products p
-JOIN catalogs.variants v ON p.product_id = v.product_id
-JOIN catalogs.quantities q ON v.variant_id = q.variant_id
-WHERE q.is_active = true
-ORDER BY estoque_livre;
+LEFT JOIN catalogs.product_compositions pc ON p.product_id = pc.product_id
+LEFT JOIN catalogs.compositions c ON pc.composition_id = c.composition_id
+LEFT JOIN catalogs.product_fillings pf ON p.product_id = pf.product_id
+LEFT JOIN catalogs.fillings f ON pf.filling_id = f.filling_id
+LEFT JOIN catalogs.product_flavors pfl ON p.product_id = pfl.product_id
+LEFT JOIN catalogs.flavors fl ON pfl.flavor_id = fl.flavor_id
+LEFT JOIN catalogs.product_nutritional_variants pnv ON p.product_id = pnv.product_id
+LEFT JOIN catalogs.nutritional_variants nv ON pnv.nutritional_variant_id = nv.nutritional_variant_id
+WHERE p.is_active = true
+GROUP BY p.product_id, p.name
+ORDER BY p.name;
 ```
 
 ### **Verificar Auditoria**
@@ -344,15 +365,19 @@ ORDER BY table_name;
 1. **categories** (categorias principais)
 2. **subcategories** (subcategorias)
 3. **brands** (marcas)
-4. **products** (produtos base)
-5. **variants** (variações)
-6. **quantities** (estoque)
-7. **Características** (composições, recheios, etc.)
+4. **items** (itens genéricos)
+5. **products** (produtos específicos)
+6. **Características** (composições, recheios, sabores, formatos, embalagens)
+7. **variant_types** (tipos de variações)
+8. **nutritional_variants** (variantes nutricionais)
+9. **quantities** (tipos de quantidade/medida)
+10. **offers** (ofertas e promoções)
 
 ### **Boas Práticas**
-- Use SKUs únicos para variações
 - Mantenha hierarquia de categorias consistente
-- Monitore estoque regularmente
+- Use itens genéricos como base para produtos específicos
+- Organize características de forma lógica e reutilizável
+- Monitore variantes nutricionais para controle de restrições
 - Use transações para operações complexas
 - Crie auditoria para todas as tabelas
 
@@ -361,10 +386,9 @@ ORDER BY table_name;
 ## 📚 RECURSOS ADICIONAIS
 
 - **[README.md](README.md)** - Documentação geral do projeto
-- **[README_SCHEMAS.md](README_SCHEMAS.md)** - Visão geral de todos os schemas
-- **[README_SCHEMA_ACCOUNTS.md](README_SCHEMA_ACCOUNTS.md)** - Schema de autenticação
-- **[README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - Funções auxiliares e validações
-- **[README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - Sistema de auditoria
+- **[schemas/README_SCHEMA_ACCOUNTS.md](schemas/accounts/README_SCHEMA_ACCOUNTS.md)** - Schema de autenticação
+- **[schemas/README_SCHEMA_AUX.md](schemas/aux/README_SCHEMA_AUX.md)** - Funções auxiliares e validações
+- **[schemas/README_SCHEMA_AUDIT.md](schemas/audit/README_SCHEMA_AUDIT.md)** - Sistema de auditoria
 
 ---
 
