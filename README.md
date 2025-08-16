@@ -11,6 +11,7 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[🔐 README_SCHEMA_SESSIONS.md](schemas/sessions/README_SCHEMA_SESSIONS.md)** - **Guia completo** do schema sessions (controle de sessões)
 - **[🔧 README_SCHEMA_AUX.md](schemas/aux/README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
 - **[📊 README_SCHEMA_AUDIT.md](schemas/audit/README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
+- **[💳 README_SCHEMA_SUBSCRIPTIONS.md](schemas/subscriptions/README_SCHEMA_SUBSCRIPTIONS.md)** - **Guia completo** do schema subscriptions (sistema de assinaturas SaaS)
 
 ### **🔗 Links Rápidos**
 - **[📋 Accounts](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-4936&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de autenticação
@@ -81,6 +82,15 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **Controle** - Expiração, tokens, IP, user agent
 - **Auditoria** - Rastreamento completo integrado
 
+#### **`schemas/subscriptions` - Sistema de Assinaturas SaaS**
+- **[products](schemas/subscriptions/products.sql)** - Produtos comerciais disponíveis
+- **[plans](schemas/subscriptions/plans.sql)** - Planos com limites e preços
+- **[subscriptions](schemas/subscriptions/subscriptions.sql)** - Assinaturas ativas dos clientes
+- **[usage_tracking](schemas/subscriptions/usage_tracking.sql)** - Controle de uso das funcionalidades
+- **[quota_purchases](schemas/subscriptions/quota_purchases.sql)** - Microtransações para cotas excedentes
+- **Validação JSONB** - Automática via `aux.json_validation_params`
+- **Auditoria** - Completa integrada ao sistema audit
+
 ## 📂 **Estrutura de Pastas**
 
 ### **🗄️ `schemas/` - Schemas do Banco de Dados**
@@ -90,6 +100,7 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[catalogs/](schemas/catalogs/)** - Catálogo de produtos
 - **[quotation/](schemas/quotation/)** - Sistema de cotações
 - **[sessions/](schemas/sessions/)** - Controle de sessões
+- **[subscriptions/](schemas/subscriptions/)** - Sistema de assinaturas SaaS
 
 ### **🧪 `tests/` - Scripts de Teste**
 - **[test_aux_schema.sql](tests/test_aux_schema.sql)** - Testes do schema auxiliar
@@ -132,6 +143,9 @@ psql -d postgres -f misc/establishments_extension.sql
 psql -d postgres -f misc/employees_extension.sql
 psql -d postgres -f misc/quotation_schema.sql
 
+# 4. Sistema de Assinaturas
+psql -d postgres -f misc/subscriptions_schema.sql
+
 # 4. Refatoração
 psql -d postgres -f migrations/migrate_employees_to_aux.sql
 psql -d postgres -f migrations/migrate_establishments_to_aux.sql
@@ -168,6 +182,8 @@ SELECT aux.create_updated_at_trigger('accounts', 'users');
 - ✅ **Compatibilidade RDS** - Funciona sem extensões externas obrigatórias
 - ✅ **Multi-persona** - Sistema de sessões para múltiplos papéis por usuário
 - ✅ **OAuth Integration** - Suporte para Google OAuth e AWS Cognito
+- ✅ **Sistema de Assinaturas SaaS** - Planos, controle de uso e microtransações
+- ✅ **Validação JSONB Automática** - Controle de campos JSONB via parâmetros configuráveis
 
 ## 🛠️ **Manutenção**
 

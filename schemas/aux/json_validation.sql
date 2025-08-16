@@ -26,16 +26,47 @@ COMMENT ON COLUMN aux.json_validation_params.param_value IS 'Valor do parâmetro
 COMMENT ON COLUMN aux.json_validation_params.created_at IS 'Data de criação do registro';
 COMMENT ON COLUMN aux.json_validation_params.updated_at IS 'Data da última atualização do registro';
 
--- Constraints
-ALTER TABLE aux.json_validation_params ADD CONSTRAINT json_validation_params_pkey PRIMARY KEY (param_id);
-ALTER TABLE aux.json_validation_params ADD CONSTRAINT json_validation_params_unique UNIQUE (param_name, param_value);
+-- Constraints (com verificação de existência)
+DO $$
+BEGIN
+    -- Adicionar PRIMARY KEY se não existir
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_schema = 'aux' 
+        AND table_name = 'json_validation_params' 
+        AND constraint_type = 'PRIMARY KEY'
+    ) THEN
+        ALTER TABLE aux.json_validation_params ADD CONSTRAINT json_validation_params_pkey PRIMARY KEY (param_id);
+    END IF;
+    
+    -- Adicionar UNIQUE constraint se não existir
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_schema = 'aux' 
+        AND table_name = 'json_validation_params' 
+        AND constraint_type = 'UNIQUE'
+        AND constraint_name = 'json_validation_params_unique'
+    ) THEN
+        ALTER TABLE aux.json_validation_params ADD CONSTRAINT json_validation_params_unique UNIQUE (param_name, param_value);
+    END IF;
+END $$;
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_json_validation_params_name ON aux.json_validation_params (param_name);
 CREATE INDEX IF NOT EXISTS idx_json_validation_params_value ON aux.json_validation_params (param_value);
 
--- Trigger para updated_at
-SELECT aux.create_updated_at_trigger('aux', 'json_validation_params');
+-- Trigger para updated_at (com verificação de existência)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.triggers 
+        WHERE trigger_schema = 'aux' 
+        AND event_object_table = 'json_validation_params' 
+        AND trigger_name LIKE '%updated_at%'
+    ) THEN
+        PERFORM aux.create_updated_at_trigger('aux', 'json_validation_params');
+    END IF;
+END $$;
 
 -- =====================================================
 -- FUNÇÃO: validate_json_field
@@ -176,36 +207,26 @@ BEGIN
     END IF;
     
     -- Cria função de validação específica para esta tabela/coluna
-    EXECUTE format('
-        CREATE OR REPLACE FUNCTION %I.%I_%I_json_validation()
-        RETURNS TRIGGER AS $func$
+    -- Usa concatenação de string para evitar problemas com format()
+    EXECUTE 'CREATE OR REPLACE FUNCTION ' || quote_ident(p_schema_name) || '.' || 
+            quote_ident(p_table_name || '_' || p_column_name || '_json_validation') || 
+            '() RETURNS TRIGGER AS $func$
         BEGIN
             -- Validar o campo JSONB
-            IF NOT aux.validate_json_field(%L, %L, NEW.%I) THEN
-                RAISE EXCEPTION ''Validação JSONB falhou para %.%.%'';
+            IF NOT aux.validate_json_field(' || quote_literal(v_full_table_name) || ', ' || 
+            quote_literal(p_column_name) || ', NEW.' || quote_ident(p_column_name) || ') THEN
+                RAISE EXCEPTION ''Validação JSONB falhou para ' || v_full_table_name || '.' || p_column_name || ''';
             END IF;
             RETURN NEW;
         END;
-        $func$ LANGUAGE plpgsql
-    ', 
-    p_schema_name, p_table_name, p_column_name,
-    p_schema_name, p_table_name, p_column_name,
-    v_full_table_name, p_column_name, p_column_name,
-    p_schema_name, p_table_name, p_column_name
-    );
+        $func$ LANGUAGE plpgsql';
     
     -- Cria o trigger
-    EXECUTE format('
-        CREATE TRIGGER %I
-        BEFORE INSERT OR UPDATE ON %I.%I
-        FOR EACH ROW
-        EXECUTE FUNCTION %I.%I_%I_json_validation()
-    ', 
-    v_trigger_name, 
-    p_schema_name, 
-    p_table_name, 
-    p_schema_name, p_table_name, p_column_name
-    );
+    -- Usa concatenação de string para evitar problemas com format()
+    EXECUTE 'CREATE TRIGGER ' || quote_ident(v_trigger_name) || 
+            ' BEFORE INSERT OR UPDATE ON ' || quote_ident(p_schema_name) || '.' || quote_ident(p_table_name) ||
+            ' FOR EACH ROW EXECUTE FUNCTION ' || quote_ident(p_schema_name) || '.' || 
+            quote_ident(p_table_name || '_' || p_column_name || '_json_validation') || '()';
     
     RAISE NOTICE 'Trigger de validação JSON criado: % em %.%', v_trigger_name, p_schema_name, p_table_name;
 END;

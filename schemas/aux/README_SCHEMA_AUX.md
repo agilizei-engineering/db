@@ -679,6 +679,7 @@ WHERE constraint_schema = 'meu_schema';
 
 - **README_SCHEMAS.md** - Documentação geral de todos os schemas
 - **aux_schema.sql** - Script de criação do schema aux
+- **json_validation.sql** - Sistema de validação JSONB automático
 - **test_aux_schema.sql** - Scripts de teste para validação
 
 ---

@@ -22,6 +22,17 @@ COMMENT ON SCHEMA subscriptions IS 'Schema para gestão de assinaturas SaaS, pla
 -- VERIFICAÇÃO DE DEPENDÊNCIAS
 -- =====================================================
 
+-- Verifica se a extensão uuid-ossp está disponível
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'uuid-ossp') THEN
+        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        RAISE NOTICE 'Extensão uuid-ossp criada';
+    ELSE
+        RAISE NOTICE 'Extensão uuid-ossp já existe';
+    END IF;
+END $$;
+
 -- Verifica se o schema aux existe
 DO $$
 BEGIN
@@ -255,10 +266,12 @@ ALTER TABLE subscriptions.subscriptions ADD CONSTRAINT subscriptions_status_chec
     CHECK (status IN ('active', 'suspended', 'cancelled'));
 ALTER TABLE subscriptions.subscriptions ADD CONSTRAINT subscriptions_period_check 
     CHECK (start_date < end_date);
-ALTER TABLE subscriptions.subscriptions ADD CONSTRAINT subscriptions_establishment_unique 
-    UNIQUE (establishment_id, status) WHERE status = 'active';
-ALTER TABLE subscriptions.subscriptions ADD CONSTRAINT subscriptions_supplier_unique 
-    UNIQUE (supplier_id, status) WHERE status = 'active';
+-- Constraints de unicidade condicional (PostgreSQL 9.5+)
+-- Para versões mais antigas, usar índices parciais
+CREATE UNIQUE INDEX idx_subscriptions_establishment_active 
+    ON subscriptions.subscriptions (establishment_id) WHERE status = 'active';
+CREATE UNIQUE INDEX idx_subscriptions_supplier_active 
+    ON subscriptions.subscriptions (supplier_id) WHERE status = 'active';
 ALTER TABLE subscriptions.subscriptions ADD CONSTRAINT subscriptions_client_check 
     CHECK (
         (establishment_id IS NOT NULL AND supplier_id IS NULL) OR 
