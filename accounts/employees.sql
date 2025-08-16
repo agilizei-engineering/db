@@ -50,3 +50,22 @@ CREATE TABLE accounts.employees (
 -- Um usuário pode ter múltiplos papéis em diferentes estabelecimentos
 -- Suporte a funcionários que também são fornecedores
 -- Sistema multi-persona para controle de acesso
+
+-- Comentários da tabela:
+-- COMMENT ON TABLE accounts.employees IS 'Funcionários vinculados a fornecedores ou estabelecimentos';
+-- COMMENT ON COLUMN accounts.employees.employee_id IS 'Identificador do vínculo funcional';
+-- COMMENT ON COLUMN accounts.employees.user_id IS 'Usuário associado ao funcionário';
+-- COMMENT ON COLUMN accounts.employees.supplier_id IS 'Fornecedor ao qual o funcionário pertence';
+-- COMMENT ON COLUMN accounts.employees.establishment_id IS 'Estabelecimento ao qual o funcionário pertence';
+-- COMMENT ON COLUMN accounts.employees.is_active IS 'Se o vínculo está ativo';
+-- COMMENT ON COLUMN accounts.employees.activated_at IS 'Data de ativação do vínculo';
+-- COMMENT ON COLUMN accounts.employees.deactivated_at IS 'Data de desativação do vínculo';
+-- COMMENT ON COLUMN accounts.employees.created_at IS 'Data de criação';
+-- COMMENT ON COLUMN accounts.employees.updated_at IS 'Data da última atualização';
+
+-- Índices:
+-- CREATE INDEX idx_employees_user_id ON accounts.employees USING btree (user_id);
+-- CREATE INDEX idx_employees_establishment_id ON accounts.employees USING btree (establishment_id);
+-- CREATE INDEX idx_employees_supplier_id ON accounts.employees USING btree (supplier_id);
+-- CREATE INDEX idx_employees_active ON accounts.employees USING btree (is_active);
+-- CREATE INDEX idx_employees_supplier_active ON accounts.employees USING btree (supplier_id, is_active);
