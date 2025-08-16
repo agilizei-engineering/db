@@ -54,3 +54,38 @@ CREATE TABLE sessions.user_sessions (
 -- Rastreamento de IP e user agent
 -- Sistema multi-persona para controle de acesso
 -- Hash seguro dos tokens de autenticação
+
+-- Comentários da tabela:
+-- COMMENT ON TABLE sessions.user_sessions IS 'Sessões ativas dos usuários no sistema';
+-- COMMENT ON COLUMN sessions.user_sessions.session_id IS 'Identificador único da sessão';
+-- COMMENT ON COLUMN sessions.user_sessions.employee_id IS 'Funcionário ativo na sessão (contém referência ao user_id via accounts.employees)';
+-- COMMENT ON COLUMN sessions.user_sessions.current_session_id IS 'ID da sessão atual (Cognito/JWT)';
+-- COMMENT ON COLUMN sessions.user_sessions.session_expires_at IS 'Data de expiração da sessão';
+-- COMMENT ON COLUMN sessions.user_sessions.refresh_token_hash IS 'Hash do refresh token';
+-- COMMENT ON COLUMN sessions.user_sessions.access_token_hash IS 'Hash do access token';
+-- COMMENT ON COLUMN sessions.user_sessions.ip_address IS 'Endereço IP da conexão';
+-- COMMENT ON COLUMN sessions.user_sessions.user_agent IS 'User agent do navegador';
+-- COMMENT ON COLUMN sessions.user_sessions.is_active IS 'Indica se a sessão está ativa';
+-- COMMENT ON COLUMN sessions.user_sessions.created_at IS 'Data de criação da sessão';
+-- COMMENT ON COLUMN sessions.user_sessions.updated_at IS 'Data da última atualização';
+
+-- Índices:
+-- CREATE INDEX idx_user_sessions_employee_id ON sessions.user_sessions USING btree (employee_id);
+-- CREATE INDEX idx_user_sessions_current_session_id ON sessions.user_sessions USING btree (current_session_id);
+-- CREATE INDEX idx_user_sessions_expires_at ON sessions.user_sessions USING btree (session_expires_at);
+-- CREATE INDEX idx_user_sessions_is_active ON sessions.user_sessions USING btree (is_active);
+-- CREATE INDEX idx_user_sessions_ip_address ON sessions.user_sessions USING btree (ip_address);
+-- CREATE INDEX idx_user_sessions_created_at ON sessions.user_sessions USING btree (created_at);
+
+-- Índices compostos:
+-- CREATE INDEX idx_user_sessions_employee_active ON sessions.user_sessions USING btree (employee_id, is_active);
+-- CREATE INDEX idx_user_sessions_employee_expires ON sessions.user_sessions USING btree (employee_id, session_expires_at);
+-- CREATE INDEX idx_user_sessions_active_expires ON sessions.user_sessions USING btree (is_active, session_expires_at);
+
+-- Índices de texto para busca:
+-- CREATE INDEX idx_user_sessions_current_session_id_gin ON sessions.user_sessions USING gin(to_tsvector('portuguese', current_session_id));
+-- CREATE INDEX idx_user_sessions_user_agent_gin ON sessions.user_sessions USING gin(to_tsvector('portuguese', user_agent));
+
+-- Índices trigram para busca fuzzy (se pg_trgm disponível):
+-- CREATE INDEX idx_user_sessions_current_session_id_trgm ON sessions.user_sessions USING gin(current_session_id gin_trgm_ops);
+-- CREATE INDEX idx_user_sessions_user_agent_trgm ON sessions.user_sessions USING gin(user_agent gin_trgm_ops);
