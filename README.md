@@ -6,6 +6,10 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 
 ### **📖 Guias Detalhados por Schema**
 - **[📚 README_SCHEMAS.md](README_SCHEMAS.md)** - **Documentação completa** de todos os schemas, funções e exemplos de uso
+- **[🔐 README_SCHEMA_ACCOUNTS.md](README_SCHEMA_ACCOUNTS.md)** - **Guia completo** do schema accounts (autenticação e autorização)
+- **[🛍️ README_SCHEMA_CATALOGS.md](README_SCHEMA_CATALOGS.md)** - **Guia completo** do schema catalogs (catálogo de produtos)
+- **[💰 README_SCHEMA_QUOTATION.md](README_SCHEMA_QUOTATION.md)** - **Guia completo** do schema quotation (sistema de cotações)
+- **[🔐 README_SCHEMA_SESSIONS.md](README_SCHEMA_SESSIONS.md)** - **Guia completo** do schema sessions (controle de sessões)
 - **[🔧 README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
 - **[📊 README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
 
@@ -105,8 +109,20 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[dump-poc-202508150029.sql](dump-poc-202508150029.sql)** - Dump atualizado com todas as implementações
 - **[README.md](README.md)** - Este arquivo (visão geral)
 - **[README_SCHEMAS.md](README_SCHEMAS.md)** - Documentação completa de todos os schemas
+- **[README_SCHEMA_ACCOUNTS.md](README_SCHEMA_ACCOUNTS.md)** - Guia do schema accounts
+- **[README_SCHEMA_CATALOGS.md](README_SCHEMA_CATALOGS.md)** - Guia do schema catalogs
+- **[README_SCHEMA_QUOTATION.md](README_SCHEMA_QUOTATION.md)** - Guia do schema quotation
+- **[README_SCHEMA_SESSIONS.md](README_SCHEMA_SESSIONS.md)** - Guia do schema sessions
 - **[README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - Guia do schema aux
 - **[README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - Guia do sistema de auditoria
+
+### **Estrutura de Pastas por Schema**
+- **[aux/](aux/)** - Schema auxiliar (domínios e funções)
+- **[audit/](audit/)** - Sistema de auditoria
+- **[accounts/](accounts/)** - Autenticação e autorização
+- **[catalogs/](catalogs/)** - Catálogo de produtos
+- **[quotation/](quotation/)** - Sistema de cotações
+- **[sessions/](sessions/)** - Controle de sessões
 
 ## 🚀 **Como Usar**
 
