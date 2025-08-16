@@ -175,20 +175,36 @@ BEGIN
                       v_trigger_name, p_schema_name, p_table_name);
     END IF;
     
+    -- Cria função de validação específica para esta tabela/coluna
+    EXECUTE format('
+        CREATE OR REPLACE FUNCTION %I.%I_%I_json_validation()
+        RETURNS TRIGGER AS $func$
+        BEGIN
+            -- Validar o campo JSONB
+            IF NOT aux.validate_json_field(%L, %L, NEW.%I) THEN
+                RAISE EXCEPTION ''Validação JSONB falhou para %.%.%'';
+            END IF;
+            RETURN NEW;
+        END;
+        $func$ LANGUAGE plpgsql
+    ', 
+    p_schema_name, p_table_name, p_column_name,
+    p_schema_name, p_table_name, p_column_name,
+    v_full_table_name, p_column_name, p_column_name,
+    p_schema_name, p_table_name, p_column_name
+    );
+    
     -- Cria o trigger
     EXECUTE format('
         CREATE TRIGGER %I
         BEFORE INSERT OR UPDATE ON %I.%I
         FOR EACH ROW
-        EXECUTE FUNCTION %I(%L, %L, NEW.%I)
+        EXECUTE FUNCTION %I.%I_%I_json_validation()
     ', 
     v_trigger_name, 
     p_schema_name, 
     p_table_name, 
-    v_function_name,
-    v_full_table_name,
-    p_column_name,
-    p_column_name
+    p_schema_name, p_table_name, p_column_name
     );
     
     RAISE NOTICE 'Trigger de validação JSON criado: % em %.%', v_trigger_name, p_schema_name, p_table_name;
