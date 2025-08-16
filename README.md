@@ -28,124 +28,118 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 
 ### **🗄️ Schemas e Tabelas**
 
-#### **`accounts` - Autenticação e Autorização**
-- **[users](accounts/users.sql)** - Usuários autenticáveis do sistema
-- **[employees](accounts/employees.sql)** - Funcionários vinculados a estabelecimentos
-- **[roles](accounts/roles.sql)** - Perfis de acesso e permissões
-- **[establishments](accounts/establishments.sql)** - Estabelecimentos comerciais
-- **[api_keys](accounts/api_keys.sql)** - Chaves de API para autenticação
-- **[establishment_business_data](accounts/establishment_business_data.sql)** - Dados empresariais (CNPJ, Razão Social)
-- **[establishment_addresses](accounts/establishment_addresses.sql)** - Endereços dos estabelecimentos
-- **[employee_personal_data](accounts/employee_personal_data.sql)** - Dados pessoais dos funcionários
-- **[employee_addresses](accounts/employee_addresses.sql)** - Endereços dos funcionários
-- **[user_google_oauth](accounts/user_google_oauth.sql)** - Dados de autenticação OAuth do Google
+#### **`schemas/accounts` - Autenticação e Autorização**
+- **[users](schemas/accounts/users.sql)** - Usuários autenticáveis do sistema
+- **[employees](schemas/accounts/employees.sql)** - Funcionários vinculados a estabelecimentos
+- **[roles](schemas/accounts/roles.sql)** - Perfis de acesso e permissões
+- **[establishments](schemas/accounts/establishments.sql)** - Estabelecimentos comerciais
+- **[api_keys](schemas/accounts/api_keys.sql)** - Chaves de API para autenticação
+- **[establishment_business_data](schemas/accounts/establishment_business_data.sql)** - Dados empresariais (CNPJ, Razão Social)
+- **[establishment_addresses](schemas/accounts/establishment_addresses.sql)** - Endereços dos estabelecimentos
+- **[employee_personal_data](schemas/accounts/employee_personal_data.sql)** - Dados pessoais dos funcionários
+- **[employee_addresses](schemas/accounts/employee_addresses.sql)** - Endereços dos funcionários
+- **[user_google_oauth](schemas/accounts/user_google_oauth.sql)** - Dados de autenticação OAuth do Google
 
-#### **`catalogs` - Catálogo de Produtos**
-- **[products](catalogs/products.sql)** - Produtos do catálogo
-- **[categories](catalogs/categories.sql)** - Categorias de produtos
-- **[subcategories](catalogs/subcategories.sql)** - Subcategorias hierárquicas
-- **[brands](catalogs/brands.sql)** - Marcas dos produtos
-- **[variants](catalogs/variants.sql)** - Variações de produtos
-- **[compositions](catalogs/compositions.sql)** - Composições dos produtos
-- **[fillings](catalogs/fillings.sql)** - Recheios disponíveis
-- **[flavors](catalogs/flavors.sql)** - Sabores disponíveis
-- **[formats](catalogs/formats.sql)** - Formatos de produtos
-- **[packagings](catalogs/packagings.sql)** - Tipos de embalagem
-- **[quantities](catalogs/quantities.sql)** - Quantidades disponíveis
-- **[offers](catalogs/offers.sql)** - Ofertas e promoções
+#### **`schemas/catalogs` - Catálogo de Produtos**
+- **[products](schemas/catalogs/products.sql)** - Produtos do catálogo
+- **[categories](schemas/catalogs/categories.sql)** - Categorias de produtos
+- **[subcategories](schemas/catalogs/subcategories.sql)** - Subcategorias hierárquicas
+- **[brands](schemas/catalogs/brands.sql)** - Marcas dos produtos
+- **[variants](schemas/catalogs/variants.sql)** - Variações de produtos
+- **[compositions](schemas/catalogs/compositions.sql)** - Composições dos produtos
+- **[fillings](schemas/catalogs/fillings.sql)** - Recheios disponíveis
+- **[flavors](schemas/catalogs/flavors.sql)** - Sabores disponíveis
+- **[formats](schemas/catalogs/formats.sql)** - Formatos de produtos
+- **[packagings](schemas/catalogs/packagings.sql)** - Tipos de embalagem
+- **[quantities](schemas/catalogs/quantities.sql)** - Quantidades disponíveis
+- **[offers](schemas/catalogs/offers.sql)** - Ofertas e promoções
 
-#### **`quotation` - Sistema de Cotações**
-- **[shopping_lists](quotation/shopping_lists.sql)** - Listas de compras dos estabelecimentos
-- **[shopping_list_items](quotation/shopping_list_items.sql)** - Itens das listas com decomposição
-- **[quotation_submissions](quotation/quotation_submissions.sql)** - Submissões de cotação
-- **[supplier_quotations](quotation/supplier_quotations.sql)** - Cotações dos fornecedores
-- **[quoted_prices](quotation/quoted_prices.sql)** - Preços cotados com condições
-- **[submission_statuses](quotation/submission_statuses.sql)** - Status das submissões
-- **[supplier_quotation_statuses](quotation/supplier_quotation_statuses.sql)** - Status das cotações
+#### **`schemas/quotation` - Sistema de Cotações**
+- **[shopping_lists](schemas/quotation/shopping_lists.sql)** - Listas de compras dos estabelecimentos
+- **[shopping_list_items](schemas/quotation/shopping_list_items.sql)** - Itens das listas com decomposição
+- **[quotation_submissions](schemas/quotation/quotation_submissions.sql)** - Submissões de cotação
+- **[supplier_quotations](schemas/quotation/supplier_quotations.sql)** - Cotações dos fornecedores
+- **[quoted_prices](schemas/quotation/quoted_prices.sql)** - Preços cotados com condições
+- **[submission_statuses](schemas/quotation/submission_statuses.sql)** - Status das submissões
+- **[supplier_quotation_statuses](schemas/quotation/supplier_quotation_statuses.sql)** - Status das cotações
 
-#### **`audit` - Sistema Automático de Auditoria**
+#### **`schemas/audit` - Sistema Automático de Auditoria**
 - **Tabelas automáticas** - Criadas dinamicamente para cada tabela auditada
 - **Nomenclatura** - `schema__table` (ex: `audit.accounts__users`)
 - **Particionamento** - Automático por data (ano/mês/dia)
 - **Captura** - INSERT, UPDATE, DELETE automaticamente
 - **Sincronização** - Detecta mudanças estruturais automaticamente
 
-#### **`aux` - Funções Auxiliares e Validações**
+#### **`schemas/aux` - Funções Auxiliares e Validações**
 - **Validações** - CPF, CNPJ, CEP, Email, URL, Data de Nascimento
 - **Formatação** - Padrões brasileiros para documentos
 - **Triggers** - Automáticos para validação e updated_at
 - **Domínios** - Tipos de dados validados (estado, gênero, moeda)
 
-#### **`sessions` - Controle de Sessões**
-- **[user_sessions](sessions/user_sessions.sql)** - Sessões ativas dos usuários
+#### **`schemas/sessions` - Controle de Sessões**
+- **[user_sessions](schemas/sessions/user_sessions.sql)** - Sessões ativas dos usuários
 - **Multi-persona** - Um usuário pode ter múltiplas sessões
 - **Controle** - Expiração, tokens, IP, user agent
 - **Auditoria** - Rastreamento completo integrado
 
-## 📂 **Arquivos do Repositório**
+## 📂 **Estrutura de Pastas**
 
-### **Scripts Principais**
-- **[aux_schema.sql](aux_schema.sql)** - Schema auxiliar com funções compartilhadas
-- **[audit_system.sql](audit_system.sql)** - Sistema completo de auditoria automática
-- **[establishments_extension.sql](establishments_extension.sql)** - Extensão para dados empresariais
-- **[employees_extension.sql](employees_extension.sql)** - Extensão para dados pessoais
-- **[quotation_schema.sql](quotation_schema.sql)** - Schema completo de cotações
-- **[enhance_users_security.sql](enhance_users_security.sql)** - Melhorias de segurança e OAuth
+### **🗄️ `schemas/` - Schemas do Banco de Dados**
+- **[aux/](schemas/aux/)** - Funções auxiliares e validações
+- **[audit/](schemas/audit/)** - Sistema automático de auditoria
+- **[accounts/](schemas/accounts/)** - Autenticação e autorização
+- **[catalogs/](schemas/catalogs/)** - Catálogo de produtos
+- **[quotation/](schemas/quotation/)** - Sistema de cotações
+- **[sessions/](schemas/sessions/)** - Controle de sessões
 
-### **Scripts de Migração e Limpeza**
-- **[migrate_employees_to_aux.sql](migrate_employees_to_aux.sql)** - Migração de employees para schema aux
-- **[migrate_establishments_to_aux.sql](migrate_establishments_to_aux.sql)** - Migração de establishments para schema aux
-- **[cleanup_duplicated_functions.sql](cleanup_duplicated_functions.sql)** - Limpeza de funções duplicadas
-- **[expand_aux_schema.sql](expand_aux_schema.sql)** - Expansão do schema aux
+### **🧪 `tests/` - Scripts de Teste**
+- **[test_aux_schema.sql](tests/test_aux_schema.sql)** - Testes do schema auxiliar
+- **[test_quotation_schema.sql](tests/test_quotation_schema.sql)** - Testes do schema de cotações
+- **[test_pg_trgm.sql](tests/test_pg_trgm.sql)** - Testes de compatibilidade pg_trgm
+- **[test_employees_extension.sql](tests/test_employees_extension.sql)** - Testes da extensão de funcionários
+- **[test_partitioned_table.sql](tests/test_partitioned_table.sql)** - Testes de tabelas particionadas
 
-### **Scripts de Teste**
-- **[test_aux_schema.sql](test_aux_schema.sql)** - Testes do schema aux
-- **[test_employees_extension.sql](test_employees_extension.sql)** - Testes da extensão de funcionários
-- **[test_quotation_schema.sql](test_quotation_schema.sql)** - Testes do schema de cotações
-- **[test_pg_trgm.sql](test_pg_trgm.sql)** - Testes de compatibilidade RDS
+### **💾 `dumps/` - Scripts de Dump**
+- **[dump-poc-202508150029.sql](dumps/dump-poc-202508150029.sql)** - Dump mais recente do banco
+- **[dump-poc-202508141109.sql](dumps/dump-poc-202508141109.sql)** - Dump anterior do banco
 
-### **Dumps e Documentação**
-- **[dump-poc-202508141109.sql](dump-poc-202508141109.sql)** - Dump inicial do banco
-- **[dump-poc-202508150029.sql](dump-poc-202508150029.sql)** - Dump atualizado com todas as implementações
-- **[README.md](README.md)** - Este arquivo (visão geral)
-- **[README_SCHEMAS.md](README_SCHEMAS.md)** - Documentação completa de todos os schemas
-- **[README_SCHEMA_ACCOUNTS.md](README_SCHEMA_ACCOUNTS.md)** - Guia do schema accounts
-- **[README_SCHEMA_CATALOGS.md](README_SCHEMA_CATALOGS.md)** - Guia do schema catalogs
-- **[README_SCHEMA_QUOTATION.md](README_SCHEMA_QUOTATION.md)** - Guia do schema quotation
-- **[README_SCHEMA_SESSIONS.md](README_SCHEMA_SESSIONS.md)** - Guia do schema sessions
-- **[README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - Guia do schema aux
-- **[README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - Guia do sistema de auditoria
+### **🔄 `migrations/` - Scripts de Migração**
+- **[migrate_employees_to_aux.sql](migrations/migrate_employees_to_aux.sql)** - Migração de employees para schema aux
+- **[migrate_establishments_to_aux.sql](migrations/migrate_establishments_to_aux.sql)** - Migração de establishments para schema aux
 
-### **Estrutura de Pastas por Schema**
-- **[aux/](aux/)** - Schema auxiliar (domínios e funções)
-- **[audit/](audit/)** - Sistema de auditoria
-- **[accounts/](accounts/)** - Autenticação e autorização
-- **[catalogs/](catalogs/)** - Catálogo de produtos
-- **[quotation/](quotation/)** - Sistema de cotações
-- **[sessions/](sessions/)** - Controle de sessões
+### **📄 `misc/` - Outros Scripts**
+- **[aux_schema.sql](misc/aux_schema.sql)** - Schema auxiliar com funções compartilhadas
+- **[audit_system.sql](misc/audit_system.sql)** - Sistema completo de auditoria automática
+- **[establishments_extension.sql](misc/establishments_extension.sql)** - Extensão para dados empresariais
+- **[employees_extension.sql](misc/employees_extension.sql)** - Extensão para dados pessoais
+- **[quotation_schema.sql](misc/quotation_schema.sql)** - Schema completo de cotações
+- **[enhance_users_security.sql](misc/enhance_users_security.sql)** - Melhorias de segurança e OAuth
+- **[cleanup_duplicated_functions.sql](misc/cleanup_duplicated_functions.sql)** - Limpeza de funções duplicadas
+- **[expand_aux_schema.sql](misc/expand_aux_schema.sql)** - Expansão do schema aux
+- **[audit_example.sql](misc/audit_example.sql)** - Exemplos de uso do sistema de auditoria
 
 ## 🚀 **Como Usar**
 
 ### **1. Ordem de Execução**
 ```bash
 # 1. Pré-requisitos
-psql -d postgres -f aux_schema.sql
+psql -d postgres -f misc/aux_schema.sql
 
 # 2. Sistema de Auditoria
-psql -d postgres -f audit_system.sql
+psql -d postgres -f misc/audit_system.sql
 
 # 3. Extensões
-psql -d postgres -f establishments_extension.sql
-psql -d postgres -f employees_extension.sql
-psql -d postgres -f quotation_schema.sql
+psql -d postgres -f misc/establishments_extension.sql
+psql -d postgres -f misc/employees_extension.sql
+psql -d postgres -f misc/quotation_schema.sql
 
 # 4. Refatoração
-psql -d postgres -f migrate_employees_to_aux.sql
-psql -d postgres -f migrate_establishments_to_aux.sql
-psql -d postgres -f cleanup_duplicated_functions.sql
+psql -d postgres -f migrations/migrate_employees_to_aux.sql
+psql -d postgres -f migrations/migrate_establishments_to_aux.sql
+psql -d postgres -f misc/cleanup_duplicated_functions.sql
 
 # 5. Melhorias de Segurança
-psql -d postgres -f enhance_users_security.sql
+psql -d postgres -f misc/enhance_users_security.sql
 ```
 
 ### **2. Auditoria Automática**
