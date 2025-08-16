@@ -5,13 +5,12 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 ## 📚 **Documentação Completa**
 
 ### **📖 Guias Detalhados por Schema**
-- **[📚 README_SCHEMAS.md](README_SCHEMAS.md)** - **Documentação completa** de todos os schemas, funções e exemplos de uso
-- **[🔐 README_SCHEMA_ACCOUNTS.md](README_SCHEMA_ACCOUNTS.md)** - **Guia completo** do schema accounts (autenticação e autorização)
-- **[🛍️ README_SCHEMA_CATALOGS.md](README_SCHEMA_CATALOGS.md)** - **Guia completo** do schema catalogs (catálogo de produtos)
-- **[💰 README_SCHEMA_QUOTATION.md](README_SCHEMA_QUOTATION.md)** - **Guia completo** do schema quotation (sistema de cotações)
-- **[🔐 README_SCHEMA_SESSIONS.md](README_SCHEMA_SESSIONS.md)** - **Guia completo** do schema sessions (controle de sessões)
-- **[🔧 README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
-- **[📊 README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
+- **[🔐 README_SCHEMA_ACCOUNTS.md](schemas/accounts/README_SCHEMA_ACCOUNTS.md)** - **Guia completo** do schema accounts (autenticação e autorização)
+- **[🛍️ README_SCHEMA_CATALOGS.md](schemas/catalogs/README_SCHEMA_CATALOGS.md)** - **Guia completo** do schema catalogs (catálogo de produtos)
+- **[💰 README_SCHEMA_QUOTATION.md](schemas/quotation/README_SCHEMA_QUOTATION.md)** - **Guia completo** do schema quotation (sistema de cotações)
+- **[🔐 README_SCHEMA_SESSIONS.md](schemas/sessions/README_SCHEMA_SESSIONS.md)** - **Guia completo** do schema sessions (controle de sessões)
+- **[🔧 README_SCHEMA_AUX.md](schemas/aux/README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
+- **[📊 README_SCHEMA_AUDIT.md](schemas/audit/README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
 
 ### **🔗 Links Rápidos**
 - **[📋 Accounts](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-4936&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de autenticação
