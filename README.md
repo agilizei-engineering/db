@@ -1,6 +1,6 @@
 # 🗄️ Sistema de Banco de Dados PostgreSQL
 
-Este repositório contém scripts SQL para um sistema de banco de dados PostgreSQL com schemas `accounts` e `catalogs`, incluindo extensões e sistema de auditoria completo.
+Este repositório contém scripts SQL para um sistema de banco de dados PostgreSQL robusto e auditável, com schemas para autenticação, catálogo de produtos, cotações e sistema automático de auditoria.
 
 ## 📚 **Documentação Completa**
 
@@ -9,355 +9,204 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[🔧 README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
 - **[📊 README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
 
-### **🎯 O que você encontrará nos guias:**
-- ✅ **Exemplos práticos** de todas as funções
-- ✅ **Consultas SQL** com exemplos reais
-- ✅ **Guias de manutenção** e monitoramento
-- ✅ **Solução de problemas** comuns
-- ✅ **Boas práticas** e padrões recomendados
-
 ### **🔗 Links Rápidos**
 - **[📋 Accounts](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-4936&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de autenticação
 - **[🛍️ Catalogs](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-5599&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de produtos
 - **[💰 Quotation](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=176-1201&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de cotações
 
-## ⚠️ Pré-requisitos
+## ⚠️ **Pré-requisitos**
 
 - **PostgreSQL 12 ou superior**
 - **Acesso de superusuário** ou permissões para criar schemas e extensões
-- **Extensão pg_trgm** (opcional - comum no RDS, mas não obrigatória)
-- **Funcionalidades nativas** do PostgreSQL sempre funcionam
+- **Funcionalidades nativas** do PostgreSQL (sem dependências externas obrigatórias)
 
-## 📁 Estrutura do Projeto
+## 📁 **Estrutura do Projeto**
 
-### **🗄️ Schemas Principais**
+### **🗄️ Schemas e Tabelas**
 
-#### `accounts` - Autenticação e Autorização
-- **users** - Usuários do sistema
-- **employees** - Funcionários/Colaboradores
-- **roles** - Perfis de acesso
-- **establishments** - Estabelecimentos/Empresas
-- **api_keys** - Chaves de API para autenticação
+#### **`accounts` - Autenticação e Autorização**
+- **[users](accounts/users.sql)** - Usuários autenticáveis do sistema
+- **[employees](accounts/employees.sql)** - Funcionários vinculados a estabelecimentos
+- **[roles](accounts/roles.sql)** - Perfis de acesso e permissões
+- **[establishments](accounts/establishments.sql)** - Estabelecimentos comerciais
+- **[api_keys](accounts/api_keys.sql)** - Chaves de API para autenticação
+- **[establishment_business_data](accounts/establishment_business_data.sql)** - Dados empresariais (CNPJ, Razão Social)
+- **[establishment_addresses](accounts/establishment_addresses.sql)** - Endereços dos estabelecimentos
+- **[employee_personal_data](accounts/employee_personal_data.sql)** - Dados pessoais dos funcionários
+- **[employee_addresses](accounts/employee_addresses.sql)** - Endereços dos funcionários
+- **[user_google_oauth](accounts/user_google_oauth.sql)** - Dados de autenticação OAuth do Google
 
-#### `catalogs` - Catálogo de Produtos
-- **products** - Produtos
-- **categories** - Categorias
-- **brands** - Marcas
-- **variations** - Variações de produtos
-- **variant_types** - Tipos de variação
+#### **`catalogs` - Catálogo de Produtos**
+- **[products](catalogs/products.sql)** - Produtos do catálogo
+- **[categories](catalogs/categories.sql)** - Categorias de produtos
+- **[subcategories](catalogs/subcategories.sql)** - Subcategorias hierárquicas
+- **[brands](catalogs/brands.sql)** - Marcas dos produtos
+- **[variants](catalogs/variants.sql)** - Variações de produtos
+- **[compositions](catalogs/compositions.sql)** - Composições dos produtos
+- **[fillings](catalogs/fillings.sql)** - Recheios disponíveis
+- **[flavors](catalogs/flavors.sql)** - Sabores disponíveis
+- **[formats](catalogs/formats.sql)** - Formatos de produtos
+- **[packagings](catalogs/packagings.sql)** - Tipos de embalagem
+- **[quantities](catalogs/quantities.sql)** - Quantidades disponíveis
+- **[offers](catalogs/offers.sql)** - Ofertas e promoções
 
-### Extensões
+#### **`quotation` - Sistema de Cotações**
+- **[shopping_lists](quotation/shopping_lists.sql)** - Listas de compras dos estabelecimentos
+- **[shopping_list_items](quotation/shopping_list_items.sql)** - Itens das listas com decomposição
+- **[quotation_submissions](quotation/quotation_submissions.sql)** - Submissões de cotação
+- **[supplier_quotations](quotation/supplier_quotations.sql)** - Cotações dos fornecedores
+- **[quoted_prices](quotation/quoted_prices.sql)** - Preços cotados com condições
+- **[submission_statuses](quotation/submission_statuses.sql)** - Status das submissões
+- **[supplier_quotation_statuses](quotation/supplier_quotation_statuses.sql)** - Status das cotações
 
-#### `establishments_extension.sql`
-Extensão do schema `accounts` para dados empresariais:
-
-- **establishment_business_data** - Dados empresariais (CNPJ, Razão Social, Nome Fantasia)
-- **establishment_addresses** - Endereços dos estabelecimentos
-
-**Características:**
-- ✅ Limpeza automática de CNPJ e CEP (remove máscaras)
-- ✅ Validação completa de CNPJ
-- ✅ Soft delete implementado
-- ✅ Índices de busca otimizados (GIN + trigram se disponível, padrão se não)
-- ✅ Constraints de negócio
-- ✅ Compatível com RDS PostgreSQL
-
-#### `employees_extension.sql`
-Extensão do schema `accounts` para dados pessoais dos funcionários:
-
-- **employee_personal_data** - Dados pessoais (CPF, nome, nascimento, sexo, foto)
-- **employee_addresses** - Endereços dos funcionários
-
-**Características:**
-- ✅ Validação completa de CPF brasileiro
-- ✅ Limpeza automática de CPF e CEP (remove máscaras)
-- ✅ Validação de data de nascimento (idade mínima 14 anos)
-- ✅ Validação de URL de foto
-- ✅ Soft delete implementado
-- ✅ Índices de busca otimizados (GIN + trigram se disponível, padrão se não)
-- ✅ Constraints de negócio robustas
-- ✅ Compatível com RDS PostgreSQL
-
-#### `audit_system.sql`
-Sistema completo de auditoria genérico:
-
-- **Schema `audit`** - Tabelas de auditoria
-- **Nomenclatura** - `schema__table` (ex: `accounts__users`)
+#### **`audit` - Sistema Automático de Auditoria**
+- **Tabelas automáticas** - Criadas dinamicamente para cada tabela auditada
+- **Nomenclatura** - `schema__table` (ex: `audit.accounts__users`)
 - **Particionamento** - Automático por data (ano/mês/dia)
-- **Triggers** - Captura INSERT, UPDATE, DELETE
+- **Captura** - INSERT, UPDATE, DELETE automaticamente
 - **Sincronização** - Detecta mudanças estruturais automaticamente
 
-#### `quotation_schema.sql`
-Schema completo para sistema de cotações:
+#### **`aux` - Funções Auxiliares e Validações**
+- **Validações** - CPF, CNPJ, CEP, Email, URL, Data de Nascimento
+- **Formatação** - Padrões brasileiros para documentos
+- **Triggers** - Automáticos para validação e updated_at
+- **Domínios** - Tipos de dados validados (estado, gênero, moeda)
 
-- **`shopping_lists`** - Listas de compras dos estabelecimentos
-- **`shopping_list_items`** - Itens com decomposição completa para busca refinada
-- **`quotation_submissions`** - Submissões de cotação
-- **`supplier_quotations`** - Cotações recebidas dos fornecedores
-- **`quoted_prices`** - Preços cotados com condições comerciais
-- **Tabelas de domínio** - Status para submissões e cotações
-- **Integração completa** - Foreign keys para accounts e catalogs
-- **Sistema de auditoria** - Integrado automaticamente
+#### **`sessions` - Controle de Sessões**
+- **[user_sessions](sessions/user_sessions.sql)** - Sessões ativas dos usuários
+- **Multi-persona** - Um usuário pode ter múltiplas sessões
+- **Controle** - Expiração, tokens, IP, user agent
+- **Auditoria** - Rastreamento completo integrado
 
-## 🚀 Como Usar
+## 📂 **Arquivos do Repositório**
 
-### 1. Instalação Base
-```sql
--- Execute o dump principal
-\i dump-poc-202508141109.sql
+### **Scripts Principais**
+- **[aux_schema.sql](aux_schema.sql)** - Schema auxiliar com funções compartilhadas
+- **[audit_system.sql](audit_system.sql)** - Sistema completo de auditoria automática
+- **[establishments_extension.sql](establishments_extension.sql)** - Extensão para dados empresariais
+- **[employees_extension.sql](employees_extension.sql)** - Extensão para dados pessoais
+- **[quotation_schema.sql](quotation_schema.sql)** - Schema completo de cotações
+- **[enhance_users_security.sql](enhance_users_security.sql)** - Melhorias de segurança e OAuth
+
+### **Scripts de Migração e Limpeza**
+- **[migrate_employees_to_aux.sql](migrate_employees_to_aux.sql)** - Migração de employees para schema aux
+- **[migrate_establishments_to_aux.sql](migrate_establishments_to_aux.sql)** - Migração de establishments para schema aux
+- **[cleanup_duplicated_functions.sql](cleanup_duplicated_functions.sql)** - Limpeza de funções duplicadas
+- **[expand_aux_schema.sql](expand_aux_schema.sql)** - Expansão do schema aux
+
+### **Scripts de Teste**
+- **[test_aux_schema.sql](test_aux_schema.sql)** - Testes do schema aux
+- **[test_employees_extension.sql](test_employees_extension.sql)** - Testes da extensão de funcionários
+- **[test_quotation_schema.sql](test_quotation_schema.sql)** - Testes do schema de cotações
+- **[test_pg_trgm.sql](test_pg_trgm.sql)** - Testes de compatibilidade RDS
+
+### **Dumps e Documentação**
+- **[dump-poc-202508141109.sql](dump-poc-202508141109.sql)** - Dump inicial do banco
+- **[dump-poc-202508150029.sql](dump-poc-202508150029.sql)** - Dump atualizado com todas as implementações
+- **[README.md](README.md)** - Este arquivo (visão geral)
+- **[README_SCHEMAS.md](README_SCHEMAS.md)** - Documentação completa de todos os schemas
+- **[README_SCHEMA_AUX.md](README_SCHEMA_AUX.md)** - Guia do schema aux
+- **[README_SCHEMA_AUDIT.md](README_SCHEMA_AUDIT.md)** - Guia do sistema de auditoria
+
+## 🚀 **Como Usar**
+
+### **1. Ordem de Execução**
+```bash
+# 1. Pré-requisitos
+psql -d postgres -f aux_schema.sql
+
+# 2. Sistema de Auditoria
+psql -d postgres -f audit_system.sql
+
+# 3. Extensões
+psql -d postgres -f establishments_extension.sql
+psql -d postgres -f employees_extension.sql
+psql -d postgres -f quotation_schema.sql
+
+# 4. Refatoração
+psql -d postgres -f migrate_employees_to_aux.sql
+psql -d postgres -f migrate_establishments_to_aux.sql
+psql -d postgres -f cleanup_duplicated_functions.sql
+
+# 5. Melhorias de Segurança
+psql -d postgres -f enhance_users_security.sql
 ```
 
-### 2. Extensões de Estabelecimentos e Funcionários
+### **2. Auditoria Automática**
 ```sql
--- Adicione dados empresariais
-\i establishments_extension.sql
+-- Auditar schemas inteiros
+SELECT audit.audit_schemas(ARRAY['accounts', 'catalogs', 'quotation']);
 
--- Adicione dados pessoais dos funcionários
-\i employees_extension.sql
-```
-
-### 3. Sistema de Auditoria
-```sql
--- Instale o sistema de auditoria
-\i audit_system.sql
-
--- Audite schemas específicos
-SELECT audit.audit_schemas(ARRAY['accounts', 'catalogs']);
-
--- Ou audite uma tabela específica
+-- Ou auditar tabelas específicas
 SELECT audit.create_audit_table('accounts', 'users');
 ```
 
-### 4. Schema de Cotações
+### **3. Validações Automáticas**
 ```sql
--- Instale o schema de cotações
-\i quotation_schema.sql
+-- Criar triggers de validação
+SELECT aux.create_validation_triggers('accounts', 'users', ARRAY['email']);
 
--- Teste o schema
-\i test_quotation_schema.sql
+-- Criar trigger de updated_at
+SELECT aux.create_updated_at_trigger('accounts', 'users');
 ```
 
-## 🔧 Funcionalidades Principais
+## 🔧 **Funcionalidades Principais**
 
-## 🚨 Troubleshooting
+- ✅ **Sistema de Auditoria Automático** - Captura todas as operações INSERT/UPDATE/DELETE
+- ✅ **Validações Brasileiras** - CPF, CNPJ, CEP, Email com triggers automáticos
+- ✅ **Particionamento Inteligente** - Auditoria organizada por data para performance
+- ✅ **Sincronização Automática** - Detecta mudanças estruturais e atualiza auditoria
+- ✅ **Compatibilidade RDS** - Funciona sem extensões externas obrigatórias
+- ✅ **Multi-persona** - Sistema de sessões para múltiplos papéis por usuário
+- ✅ **OAuth Integration** - Suporte para Google OAuth e AWS Cognito
 
-### Erro: "operator class 'gin_trgm_ops' does not exist for access method 'gin'"
+## 🛠️ **Manutenção**
 
-**Causa:** A extensão `pg_trgm` não está disponível (comum no RDS PostgreSQL).
-
-**Solução:** Os scripts agora são **compatíveis com RDS** e funcionam sem a extensão:
-- ✅ **Índices padrão** sempre funcionam
-- ✅ **Busca ILIKE** para funcionalidade similar
-- ✅ **Índices trigram** criados apenas se disponíveis
-
-**Teste de compatibilidade:**
+### **Verificar Status**
 ```sql
-\i test_pg_trgm.sql
-```
-
-### Erro: "permission denied for extension pg_trgm"
-
-**Causa:** Usuário sem permissões para criar extensões (comum no RDS).
-
-**Solução:** Os scripts não tentam mais criar extensões - funcionam com funcionalidades nativas.
-
-### Limpeza Automática de Dados
-```sql
--- CNPJ e CEP são limpos automaticamente
-INSERT INTO accounts.establishment_business_data (establishment_id, cnpj, trade_name, corporate_name)
-VALUES (gen_random_uuid(), '12.345.678/0001-90', 'Empresa Teste', 'Empresa Teste LTDA');
--- CNPJ será armazenado como: 12345678000190
-
--- CPF também é limpo automaticamente
-INSERT INTO accounts.employee_personal_data (employee_id, cpf, full_name, birth_date, gender)
-VALUES (gen_random_uuid(), '123.456.789-01', 'João Silva', '1990-05-15', 'M');
--- CPF será armazenado como: 12345678901
-```
-
-### Sistema de Auditoria
-```sql
--- Todas as operações são auditadas automaticamente
-INSERT INTO accounts.users (email, full_name, cognito_sub) 
-VALUES ('teste@email.com', 'Usuário Teste', 'cognito123');
-
--- Verificar auditoria
-SELECT * FROM audit.accounts__users ORDER BY audit_timestamp DESC;
-```
-
-### Busca Otimizada
-```sql
--- Busca fuzzy por nome de estabelecimento
-SELECT * FROM accounts.search_establishments_by_name('empresa');
-
--- Busca por CEP
-SELECT * FROM accounts.find_establishments_by_postal_code('01234567');
-
--- Busca fuzzy por nome de funcionário
-SELECT * FROM accounts.search_employees_by_name('joão');
-
--- Busca funcionário por CPF
-SELECT * FROM accounts.find_employee_by_cpf('123.456.789-01');
-
--- Busca funcionários por CEP
-SELECT * FROM accounts.find_employees_by_postal_code('01234-567');
-```
-
-## 📊 Estrutura de Auditoria
-
-### Campos de Auditoria
-- `audit_id` - ID único da auditoria
-- `audit_operation` - Tipo de operação (INSERT/UPDATE/DELETE)
-- `audit_timestamp` - Data/hora da operação
-- `audit_user` - Usuário que executou
-- `audit_session_id` - ID da sessão
-- `audit_connection_id` - IP da conexão
-- `audit_partition_date` - Data para particionamento
-
-### Particionamento
-```sql
--- Tabelas são particionadas automaticamente por data
--- Exemplo: audit.accounts__users_2025_08
-```
-
-## 🛠️ Manutenção
-
-### Adicionar Nova Auditoria
-```sql
--- Para nova tabela
-SELECT audit.create_audit_table('novo_schema', 'nova_tabela');
-
--- Para novo schema
-SELECT audit.audit_schemas(ARRAY['novo_schema']);
-```
-
-### Sincronização de Estrutura
-O sistema detecta automaticamente:
-- ✅ Novas colunas adicionadas
-- ✅ Colunas removidas (mantidas como NULL na auditoria)
-- ✅ Mudanças de tipo (convertidas para text)
-
-## 📝 Exemplos de Uso
-
-### Criação de Estabelecimento Completo
-```sql
--- 1. Criar estabelecimento
-INSERT INTO accounts.establishments (name, description) 
-VALUES ('Minha Empresa', 'Descrição da empresa')
-RETURNING establishment_id;
-
--- 2. Adicionar dados empresariais
-INSERT INTO accounts.establishment_business_data (
-    establishment_id, cnpj, trade_name, corporate_name, state_registration
-) VALUES (
-    'uuid-do-estabelecimento', 
-    '12.345.678/0001-90', 
-    'Nome Fantasia', 
-    'Razão Social LTDA',
-    '123456789'
-);
-
--- 3. Adicionar endereço
-INSERT INTO accounts.establishment_addresses (
-    establishment_id, postal_code, street, number, neighborhood, city, state
-) VALUES (
-    'uuid-do-estabelecimento',
-    '01234-567',
-    'Rua das Flores',
-    '123',
-    'Centro',
-    'São Paulo',
-    'SP'
-);
-```
-
-### Criação de Funcionário Completo
-```sql
--- 1. Criar usuário primeiro
-INSERT INTO accounts.users (email, full_name, cognito_sub, is_active) 
-VALUES ('joao@empresa.com', 'João Silva Santos', 'cognito-joao', true)
-RETURNING user_id;
-
--- 2. Criar funcionário vinculado ao usuário
-INSERT INTO accounts.employees (user_id, establishment_id, is_active) 
-VALUES ('uuid-do-usuario', 'uuid-do-estabelecimento', true)
-RETURNING employee_id;
-
--- 3. Adicionar dados pessoais
-INSERT INTO accounts.employee_personal_data (
-    employee_id, cpf, full_name, birth_date, gender, photo_url
-) VALUES (
-    'uuid-do-funcionario',
-    '123.456.789-01',
-    'João Silva Santos',
-    '1990-05-15',
-    'M',
-    'https://example.com/photos/joao.jpg'
-);
-
--- 4. Adicionar endereço
-INSERT INTO accounts.employee_addresses (
-    employee_id, postal_code, street, number, neighborhood, city, state
-) VALUES (
-    'uuid-do-funcionario',
-    '01234-567',
-    'Rua das Flores',
-    '123',
-    'Centro',
-    'São Paulo',
-    'SP'
-);
-```
-
-### Consulta de Estabelecimento Completo
-```sql
--- View que combina todos os dados
-SELECT * FROM accounts.v_establishments_complete 
-WHERE establishment_id = 'uuid-do-estabelecimento';
-```
-
-### Consulta de Funcionário Completo
-```sql
--- View que combina todos os dados
-SELECT * FROM accounts.v_employees_complete 
-WHERE employee_id = 'uuid-do-funcionario';
-```
-
-## 🔍 Monitoramento
-
-### Relatórios de Auditoria
-```sql
--- Relatório básico de auditoria
-SELECT audit.generate_audit_report('accounts', 'users', '2025-01-01', '2025-12-31');
-```
-
-### Verificação de Integridade
-```sql
--- Verificar tabelas auditadas
+-- Tabelas auditadas
 SELECT table_name FROM information_schema.tables 
-WHERE table_schema = 'audit' 
-ORDER BY table_name;
+WHERE table_schema = 'audit' AND table_name LIKE '%__%';
+
+-- Triggers ativos
+SELECT trigger_name FROM information_schema.triggers 
+WHERE trigger_name LIKE '%audit%';
 ```
 
-## 📋 Requisitos
+### **Sincronizar Auditoria**
+```sql
+-- Após mudanças estruturais
+SELECT audit.sync_audit_table('schema', 'tabela');
+```
 
-- PostgreSQL 12+
-- Extensão `pg_trgm` (para busca fuzzy)
-- Extensão `uuid-ossp` (para UUIDs)
+## 📋 **Requisitos**
 
-## 🤝 Contribuição
+- **PostgreSQL 12+** - Versão mínima recomendada
+- **Permissões** - Superusuário ou permissões para criar schemas
+- **Espaço** - Suficiente para tabelas de auditoria particionadas
+- **Performance** - Índices automáticos para consultas de auditoria
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+## 🤝 **Como Contribuir**
 
+1. **Fork** o projeto
+2. **Crie uma branch** para sua feature (`git checkout -b feature/NovaFuncionalidade`)
+3. **Commit** suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. **Push** para a branch (`git push origin feature/NovaFuncionalidade`)
+5. **Abra um Pull Request**
 
+### **Padrões de Commit**
+- `feat:` - Nova funcionalidade
+- `fix:` - Correção de bug
+- `docs:` - Documentação
+- `refactor:` - Refatoração de código
+- `test:` - Adição de testes
 
-## 📄 Licença
+## 📄 **Licença**
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
 
-**Desenvolvido com ❤️ para sistemas robustos e auditáveis**
+**Desenvolvido com ❤️ por [Agilizei.app](https://agilizei.app)**
+
+**🎯 Para documentação detalhada, consulte os READMEs específicos de cada schema!**
