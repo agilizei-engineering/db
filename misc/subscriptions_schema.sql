@@ -460,6 +460,13 @@ SELECT aux.create_updated_at_trigger('subscriptions', 'quota_purchases');
 SELECT aux.create_updated_at_trigger('subscriptions', 'plan_changes');
 
 -- =====================================================
+-- TRIGGERS DE VALIDAÇÃO JSONB
+-- =====================================================
+
+-- Criar trigger de validação JSONB para plans.usage_limits
+SELECT aux.create_json_validation_trigger('subscriptions', 'plans', 'usage_limits');
+
+-- =====================================================
 -- FUNÇÕES ESPECÍFICAS
 -- =====================================================
 

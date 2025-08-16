@@ -849,6 +849,13 @@ $$;
 COMMENT ON FUNCTION aux.create_validation_triggers(text, text, text[]) IS 'Função genérica para criar todos os triggers de validação de uma tabela';
 
 -- =====================================================
+-- INCLUSÃO DO SISTEMA DE VALIDAÇÃO JSONB
+-- =====================================================
+
+-- Inclui o arquivo de validação JSONB
+\i schemas/aux/json_validation.sql
+
+-- =====================================================
 -- VERIFICAÇÃO FINAL DAS FUNÇÕES ADICIONADAS
 -- =====================================================
 
@@ -866,10 +873,14 @@ BEGIN
     RAISE NOTICE 'Schema aux expandido com sucesso!';
     RAISE NOTICE '=====================================================';
     RAISE NOTICE '';
+    RAISE NOTICE 'SISTEMA DE VALIDAÇÃO JSONB IMPLEMENTADO!';
+    RAISE NOTICE '=====================================================';
+    RAISE NOTICE '';
     RAISE NOTICE 'PROXIMOS PASSOS:';
     RAISE NOTICE '1. Migrar establishments_extension para usar aux.*';
     RAISE NOTICE '2. Verificar employees_extension esta 100 por cento limpo';
     RAISE NOTICE '3. Migrar quotation_schema se necessario';
     RAISE NOTICE '4. Limpeza final de funcoes duplicadas';
+    RAISE NOTICE '5. Sistema JSONB pronto para uso em subscriptions';
     RAISE NOTICE '=====================================================';
 END $$;

@@ -529,6 +529,70 @@ ORDER BY trigger_schema, event_object_table;
 
 ---
 
+### **🔍 VALIDAÇÃO JSONB AUTOMÁTICA**
+
+#### **`aux.validate_json_field(table_name, column_name, json_data)`**
+Valida se um campo JSONB contém as chaves corretas baseado nos parâmetros configurados.
+
+```sql
+-- Exemplos de uso
+SELECT aux.validate_json_field('subscriptions.plans', 'usage_limits', '{"quotations": 100, "suppliers": 10}'); -- true
+SELECT aux.validate_json_field('subscriptions.plans', 'usage_limits', '{"quotations": 100}'); -- false (faltando suppliers)
+SELECT aux.validate_json_field('subscriptions.plans', 'usage_limits', '{"quotations": 100, "suppliers": 10, "extra": "valor"}'); -- false (chave extra)
+```
+
+#### **`aux.create_json_validation_trigger(schema, table, column)`**
+Cria trigger de validação JSONB para uma coluna específica.
+
+```sql
+-- Exemplos de uso
+SELECT aux.create_json_validation_trigger('subscriptions', 'plans', 'usage_limits');
+SELECT aux.create_json_validation_trigger('meu_schema', 'minha_tabela', 'campo_jsonb');
+```
+
+#### **`aux.setup_json_validation_triggers()`**
+Configura automaticamente triggers de validação para todas as colunas JSONB do banco.
+
+```sql
+-- Exemplo de uso
+SELECT aux.setup_json_validation_triggers();
+-- Cria triggers para todas as colunas JSONB automaticamente
+```
+
+#### **`aux.add_json_validation_param(table_name, param_value)`**
+Adiciona um parâmetro de validação JSONB.
+
+```sql
+-- Exemplos de uso
+SELECT aux.add_json_validation_param('subscriptions.plans', 'usage_limits.quotations');
+SELECT aux.add_json_validation_param('subscriptions.plans', 'usage_limits.suppliers');
+SELECT aux.add_json_validation_param('subscriptions.plans', 'usage_limits.items');
+```
+
+#### **`aux.list_json_validation_params(table_name)`**
+Lista parâmetros de validação JSONB.
+
+```sql
+-- Exemplos de uso
+SELECT * FROM aux.list_json_validation_params(); -- Todos os parâmetros
+SELECT * FROM aux.list_json_validation_params('subscriptions.plans'); -- Filtrado por tabela
+```
+
+#### **Tabela `aux.json_validation_params`**
+Armazena parâmetros de validação para campos JSONB em todo o sistema.
+
+```sql
+-- Estrutura da tabela
+SELECT column_name, data_type, is_nullable 
+FROM information_schema.columns 
+WHERE table_schema = 'aux' AND table_name = 'json_validation_params';
+
+-- Exemplo de dados
+SELECT * FROM aux.json_validation_params WHERE param_name = 'subscriptions.plans';
+```
+
+---
+
 ## ⚠️ IMPORTANTE: BOAS PRÁTICAS
 
 ### **1. Sempre Use as Funções de Validação**
