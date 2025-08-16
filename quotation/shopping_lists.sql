@@ -46,3 +46,31 @@ CREATE TABLE quotation.shopping_lists (
 -- Controle de status da lista
 -- Rastreamento de mudanças via auditoria
 -- Base para submissão de cotações
+
+-- Comentários da tabela:
+-- COMMENT ON TABLE quotation.shopping_lists IS 'Listas de compras criadas pelos estabelecimentos';
+-- COMMENT ON COLUMN quotation.shopping_lists.shopping_list_id IS 'Identificador único da lista de compras';
+-- COMMENT ON COLUMN quotation.shopping_lists.establishment_id IS 'Referência para accounts.establishments';
+-- COMMENT ON COLUMN quotation.shopping_lists.name IS 'Nome da lista de compras';
+-- COMMENT ON COLUMN quotation.shopping_lists.description IS 'Descrição da lista de compras';
+-- COMMENT ON COLUMN quotation.shopping_lists.status IS 'Status atual da lista (DRAFT, ACTIVE, COMPLETED, CANCELLED)';
+-- COMMENT ON COLUMN quotation.shopping_lists.created_at IS 'Data de criação do registro';
+-- COMMENT ON COLUMN quotation.shopping_lists.updated_at IS 'Data da última atualização';
+
+-- Índices:
+-- CREATE INDEX idx_shopping_lists_establishment_id ON quotation.shopping_lists USING btree (establishment_id);
+-- CREATE INDEX idx_shopping_lists_name ON quotation.shopping_lists USING btree (name);
+-- CREATE INDEX idx_shopping_lists_status ON quotation.shopping_lists USING btree (status);
+-- CREATE INDEX idx_shopping_lists_created_at ON quotation.shopping_lists USING btree (created_at);
+
+-- Índices compostos:
+-- CREATE INDEX idx_shopping_lists_establishment_status ON quotation.shopping_lists USING btree (establishment_id, status);
+-- CREATE INDEX idx_shopping_lists_establishment_date ON quotation.shopping_lists USING btree (establishment_id, created_at);
+
+-- Índices de texto para busca:
+-- CREATE INDEX idx_shopping_lists_name_gin ON quotation.shopping_lists USING gin(to_tsvector('portuguese', name));
+-- CREATE INDEX idx_shopping_lists_description_gin ON quotation.shopping_lists USING gin(to_tsvector('portuguese', description));
+
+-- Índices trigram para busca fuzzy (se pg_trgm disponível):
+-- CREATE INDEX idx_shopping_lists_name_trgm ON quotation.shopping_lists USING gin(name gin_trgm_ops);
+-- CREATE INDEX idx_shopping_lists_description_trgm ON quotation.shopping_lists USING gin(description gin_trgm_ops);
