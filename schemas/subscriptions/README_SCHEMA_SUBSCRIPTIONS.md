@@ -354,4 +354,25 @@ ORDER BY table_name;
 
 ---
 
+## **🔗 INTEGRAÇÃO COM BILLING**
+
+O schema `subscriptions` integra-se com o schema `billing` para processamento financeiro:
+
+### **📊 FLUXO DE INTEGRAÇÃO:**
+
+1. **Criação de assinatura** → Gera transação em `billing.transactions`
+2. **Renovação automática** → Cria nova transação em `billing.transactions`
+3. **Compra de cotas** → Gera transação para microtransação
+4. **Mudança de plano** → Pode gerar transações de upgrade/downgrade
+
+### **🔗 REFERÊNCIAS:**
+
+- **`business_reference`** em `billing.transactions` aponta para `subscriptions.subscriptions`
+- **Validação JSONB** garante integridade das referências
+- **Auditoria completa** rastreia todas as operações financeiras
+
+**📚 Para mais detalhes, consulte: [README_SCHEMA_BILLING.md](../billing/README_SCHEMA_BILLING.md)**
+
+---
+
 **🎯 Lembre-se: O schema `subscriptions` é fundamental para o modelo de negócio SaaS. Mantenha a integridade dos dados e use sempre as validações automáticas!**

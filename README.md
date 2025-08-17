@@ -12,6 +12,7 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[🔧 README_SCHEMA_AUX.md](schemas/aux/README_SCHEMA_AUX.md)** - **Guia detalhado** do schema aux com todas as funções de validação e exemplos práticos
 - **[📊 README_SCHEMA_AUDIT.md](schemas/audit/README_SCHEMA_AUDIT.md)** - **Guia completo** do sistema de auditoria com consultas avançadas e monitoramento
 - **[💳 README_SCHEMA_SUBSCRIPTIONS.md](schemas/subscriptions/README_SCHEMA_SUBSCRIPTIONS.md)** - **Guia completo** do schema subscriptions (sistema de assinaturas SaaS)
+- **[💳 README_SCHEMA_BILLING.md](schemas/billing/README_SCHEMA_BILLING.md)** - **Guia completo** do schema billing (sistema de faturamento e processamento financeiro)
 
 ### **🔗 Links Rápidos**
 - **[📋 Accounts](https://www.figma.com/board/01WWFqQuhgNF0WvlO1WvT7/Agilizei-Fluxo-de-trabalho?node-id=55-4936&t=CE9oFJPFjtpnMZsm-4)** - Protótipos de autenticação
@@ -91,6 +92,17 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **Validação JSONB** - Automática via `aux.json_validation_params`
 - **Auditoria** - Completa integrada ao sistema audit
 
+#### **`schemas/billing` - Sistema de Faturamento e Processamento Financeiro**
+- **[transactions](schemas/billing/transactions.sql)** - Transações financeiras principais
+- **[expected_payments](schemas/billing/expected_payments.sql)** - Pagamentos esperados
+- **[installments](schemas/billing/installments.sql)** - Parcelas dos pagamentos
+- **[invoices](schemas/billing/invoices.sql)** - Documentos de pagamento
+- **[payment_attempts](schemas/billing/payment_attempts.sql)** - Tentativas de pagamento
+- **[transaction_timeline](schemas/billing/transaction_timeline.sql)** - Timeline de eventos
+- **Tabelas de domínio** para status e tipos de pagamento
+- **Validação JSONB** automática para business_reference
+- **Auditoria** completa integrada ao sistema audit
+
 ## 📂 **Estrutura de Pastas**
 
 ### **🗄️ `schemas/` - Schemas do Banco de Dados**
@@ -101,6 +113,7 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[quotation/](schemas/quotation/)** - Sistema de cotações
 - **[sessions/](schemas/sessions/)** - Controle de sessões
 - **[subscriptions/](schemas/subscriptions/)** - Sistema de assinaturas SaaS
+- **[billing/](schemas/billing/)** - Sistema de faturamento e processamento financeiro
 
 ### **🧪 `tests/` - Scripts de Teste**
 - **[test_aux_schema.sql](tests/test_aux_schema.sql)** - Testes do schema auxiliar
@@ -128,6 +141,10 @@ Este repositório contém scripts SQL para um sistema de banco de dados PostgreS
 - **[expand_aux_schema.sql](misc/expand_aux_schema.sql)** - Expansão do schema aux
 - **[audit_example.sql](misc/audit_example.sql)** - Exemplos de uso do sistema de auditoria
 
+### **💳 `schemas/billing/` - Sistema de Faturamento**
+- **[billing_schema.sql](schemas/billing/billing_schema.sql)** - Schema completo de faturamento
+- **[README_SCHEMA_BILLING.md](schemas/billing/README_SCHEMA_BILLING.md)** - Documentação completa
+
 ## 🚀 **Como Usar**
 
 ### **1. Ordem de Execução**
@@ -145,6 +162,9 @@ psql -d postgres -f misc/quotation_schema.sql
 
 # 4. Sistema de Assinaturas
 psql -d postgres -f misc/subscriptions_schema.sql
+
+# 5. Sistema de Faturamento
+psql -d postgres -f schemas/billing/billing_schema.sql
 
 # 4. Refatoração
 psql -d postgres -f migrations/migrate_employees_to_aux.sql
@@ -184,6 +204,10 @@ SELECT aux.create_updated_at_trigger('accounts', 'users');
 - ✅ **OAuth Integration** - Suporte para Google OAuth e AWS Cognito
 - ✅ **Sistema de Assinaturas SaaS** - Planos, controle de uso e microtransações
 - ✅ **Validação JSONB Automática** - Controle de campos JSONB via parâmetros configuráveis
+- ✅ **Sistema de Faturamento** - Processamento financeiro agnóstico ao negócio
+- ✅ **Múltiplos Métodos de Pagamento** - Cartão, PIX, boleto, faturado
+- ✅ **Gestão de Parcelamentos** - Installments e controle de vencimentos
+- ✅ **Timeline de Transações** - Rastreamento completo de eventos
 
 ## 🛠️ **Manutenção**
 
